@@ -1,0 +1,21 @@
+{
+	"layers": {
+		"building":		{ "minzoom":  11, "maxzoom": 14 },
+		"road":			{ "minzoom":  8, "maxzoom": 14, "simplify_below": 13, "simplify_level": 0.0003, "simplify_ratio": 2.0 },
+		"path":			{ "minzoom":  8, "maxzoom": 14, "simplify_below": 13, "simplify_level": 0.0003, "simplify_ratio": 2.0 },
+		"park":			{ "minzoom":  8, "maxzoom": 14, "simplify_below": 12, "simplify_level": 0.0003, "simplify_ratio": 2.0 },
+		"water":		{ "minzoom":  8, "maxzoom": 14, "simplify_below": 12, "simplify_level": 0.0003, "simplify_ratio": 2.0 },
+		"waterway":		{ "minzoom":  8, "maxzoom": 14, "simplify_below": 12, "simplify_level": 0.0003, "simplify_ratio": 2.0 },
+		"label":		{ "minzoom": 9, "maxzoom": 14 }
+	},
+	"settings": {
+		"minzoom": 8,
+		"maxzoom": 14,
+		"basezoom": 14,
+		"include_ids": false,
+		"name": "Tilemaker test",
+		"version": "0.1",
+		"description": "Vector tiles from OSM",
+		"compress": "gzip"
+	}
+}
