@@ -130,10 +130,25 @@ function isAscii(s)
 	return i == nil
 end
 
+local replwords = {
+	['North']='',['South']='',['East']='',['West']='',['Northeast']='',['Northwest']='',['Southeast']='',['Southwest']='',
+	['Road']='Rd',['Avenue']='Ave',['Drive']='Dr',['Street']='St',['Boulevard']='Blvd',['Lane']='Ln',['Extension']='Ext'
+}
+function padStr(s) return (s:len() > 0) and ' '..s..' ' or ' ' end
+function trimSuffixes(s)
+	local s2 = s
+	for k,v in pairs(replwords) do s2 = s2:gsub(' '..k..' ',padStr(v)) end
+	for k,v in pairs(replwords) do s2 = s2:gsub(k..'$',v) end
+	s2 = s2:gsub("%s+$", "")
+	for k,v in pairs(replwords) do s2 = s2:gsub(k..'$',v) end
+	s2 = s2:gsub("%s+$", "")
+	return s2
+end
+
 function getAsciiName()
 	local name = Find("name")
 	if name~="" and isAscii(name) then
-		return name
+		return trimSuffixes(name)
 	end
 
 	return nil

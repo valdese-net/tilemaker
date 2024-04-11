@@ -28,3 +28,6 @@ docker run -v ./:/srv -i -t --rm tilemaker /srv/data/valdese-area.osm.pbf --outp
 #pmtiles convert valdese.mbtiles valdese.pmtiles
 #pmtiles convert burke.mbtiles burke.pmtiles
 
+# create parcel tiles to a precision of 6 inches
+tippecanoe -f -o data/valdese-parcels.pmtiles -l vparcels -n "Valdese Parcels" -Z10 -z16 data/valdese-parcels.geojson
+
