@@ -115,9 +115,9 @@ function way_function()
 		if name then
 			Attribute("name", name)
 		end
-	elseif leisure=="park" and Holds("name") then
-		Layer("park", true)
-		Attribute("class", leisure)
+	--elseif leisure=="park" and Holds("name") then
+	--	Layer("park", true)
+	--	Attribute("class", leisure)
 	elseif showBuildings[building] then
 		Layer("building", true)
 		Attribute("class", building)

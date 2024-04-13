@@ -31,3 +31,8 @@ docker run -v ./:/srv -i -t --rm tilemaker /srv/data/valdese-area.osm.pbf --outp
 # create parcel tiles to a precision of 6 inches
 tippecanoe -f -o data/valdese-parcels.pmtiles -l vparcels -n "Valdese Parcels" -Z10 -z16 data/valdese-parcels.geojson
 
+# convert shape file with Lambert_Conformal_Conic projection to geojson
+ogr2ogr -f GeoJSON -s_srs data/parcels/nc_burke_parcels_poly.prj -t_srs EPSG:4326 data/parcels.geojson data/parcels/nc_burke_parcels_poly.shp
+
+# extract park parcels
+node extract-parcels-by-parno.js data/parcels.geojson "2744445905,2744329127,2734831442,2734843186,2744411968" > data/vlp-parcels.geojson
