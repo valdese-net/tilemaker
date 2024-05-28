@@ -7,16 +7,16 @@ function extractValue(a) {
 }
 
 let fname = process.argv[2];
-let parno_liststr = process.argv[3];
+let parno_listfile = process.argv[3];
 
-if (!fname || !fs.existsSync(fname) || !parno_liststr) {
+if (!fname || !fs.existsSync(fname) || !parno_listfile || !fs.existsSync(parno_listfile)) {
 	let cmd = process.argv[1];
-	console.error(`Usage: ${cmd} jsonfile parno1,parno2,...`);
+	console.error(`Usage: ${cmd} jsonfile parnofile`);
 	process.exit(1);
 }
 
 let gj = {type:'FeatureCollection',features:[]};
-let parno_list = parno_liststr.split(',');
+let parno_list = fs.readFileSync(parno_listfile).toString().trim().split('\n');
 let parcelList = JSON.parse(fs.readFileSync(fname).toString());
 parcelList.features.forEach(e => {
 	let parno = e.properties.PARNO || '';
@@ -33,3 +33,7 @@ parcelList.features.forEach(e => {
 });
 
 console.log(JSON.stringify(gj));
+
+let c1 = parno_list.length;
+let c2 = gj.features.length;
+console.warn(`${c1} pins, ${c2} parcels found`);
