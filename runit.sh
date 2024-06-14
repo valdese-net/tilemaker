@@ -25,6 +25,9 @@ docker run -v ./:/srv -i -t --rm tilemaker /srv/data/vlp.osm.pbf --output=/srv/d
 # valdese-area generated via https://app.protomaps.com/
 docker run -v ./:/srv -i -t --rm tilemaker /srv/data/valdese-area.osm.pbf --output=/srv/data/valdese-area.pmtiles --config /srv/tilemaker-vlp.json --process /srv/tilemaker-vlp.lua
 
+# burke-river-trail (brt) map
+docker run -v ./:/srv -i -t --rm tilemaker /srv/data/burke.osm.pbf --output=/srv/data/brt.pmtiles --config /srv/tilemaker-brt.json --process /srv/tilemaker-brt.lua
+
 #pmtiles convert valdese.mbtiles valdese.pmtiles
 #pmtiles convert burke.mbtiles burke.pmtiles
 

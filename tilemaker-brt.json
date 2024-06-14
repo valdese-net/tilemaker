@@ -1,0 +1,19 @@
+{
+	"layers": {
+		"water":		{ "minzoom": 4, "maxzoom": 14, "simplify_below": 13, "simplify_level": 0.0003, "simplify_ratio": 2.0 },
+		"motorway":		{ "minzoom": 4, "maxzoom": 14, "simplify_below": 13, "simplify_level": 0.0003, "simplify_ratio": 2.0 },
+		"waterway":		{ "minzoom": 13, "maxzoom": 14, "simplify_below": 14, "simplify_level": 0.0003, "simplify_ratio": 2.0 },
+		"road":			{ "minzoom": 13, "maxzoom": 14, "simplify_below": 14, "simplify_level": 0.0003, "simplify_ratio": 2.0 },
+		"label":		{ "minzoom":  8, "maxzoom": 14 }
+	},
+	"settings": {
+		"minzoom": 4,
+		"maxzoom": 14,
+		"basezoom": 14,
+		"include_ids": false,
+		"name": "Plain",
+		"version": "1.0",
+		"description": "Plain map",
+		"compress": "gzip"
+	}
+}
