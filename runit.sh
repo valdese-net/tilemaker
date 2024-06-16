@@ -27,6 +27,7 @@ docker run -v ./:/srv -i -t --rm tilemaker /srv/data/valdese-area.osm.pbf --outp
 
 # burke-river-trail (brt) map
 docker run -v ./:/srv -i -t --rm tilemaker /srv/data/burke.osm.pbf --output=/srv/data/brt.pmtiles --config /srv/tilemaker-brt.json --process /srv/tilemaker-brt.lua
+docker run -v ./:/srv -i -t --rm tilemaker /srv/data/north-carolina-latest.osm.pbf --output=/srv/data/brt-nc.pmtiles --config /srv/tilemaker-brt.json --process /srv/tilemaker-brt.lua
 
 #pmtiles convert valdese.mbtiles valdese.pmtiles
 #pmtiles convert burke.mbtiles burke.pmtiles
@@ -36,6 +37,8 @@ tippecanoe -f -o data/valdese-parcels.pmtiles -l vparcels -n "Valdese Parcels" -
 
 # convert shape file with Lambert_Conformal_Conic projection to geojson
 ogr2ogr -f GeoJSON -s_srs data/parcels/nc_burke_parcels_poly.prj -t_srs EPSG:4326 data/parcels.geojson data/parcels/nc_burke_parcels_poly.shp
+ogr2ogr -f GeoJSON -s_srs data/counties/cb_2023_us_county_500k.prj -t_srs EPSG:4326 data/counties.geojson data/counties/cb_2023_us_county_500k.shp
+ogr2ogr -f GeoJSON -s_srs data/states/cb_2023_us_state_500k.prj -t_srs EPSG:4326 data/us-states.geojson data/states/cb_2023_us_state_500k.shp
 
 # extract park parcels
 node extract-parcels-by-parno.js data/parcels.geojson valdese-parcels.txt > data/vlp-parcels.geojson

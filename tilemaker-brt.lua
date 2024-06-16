@@ -45,26 +45,50 @@ end
 
 -- Assign ways to a layer, and set attributes, based on OSM tags
 function way_function()
+	local addedLayer = false
 	local waterway = Find("waterway")
 	local highway  = Find("highway")
 	local name = getAsciiName()
-	local ref = roadsWithRef[objclass] and Find("ref") or false
+
+	if Holds("name") or Holds("ref") then
+		if highway~="" then
+			local _,_,linked_path = highway:find("^(%l+)_link")
+			if linked_path then
+				highway = linked_path
+			end
+			if pathValues[highway] then
+				highway = "path"
+			end
 	
-	if name or ref then
-		if Find("natural")=="water" then
+			local objtype = "road"
+			local objclass = highway
+	
+			if majorRoadValues[highway] and not linked_path then
+				addedLayer = true
+				Layer("road", false)
+				Attribute("class", highway)
+			end
+		elseif Find("natural")=="water" then
 			local c = (Find("water")=="river") and "river" or "lake"
+			addedLayer = true
 			Layer("water", true)
 			Attribute("class", c)
-		elseif waterway=="stream" or waterway=="river" or waterway=="canal" then
+		elseif (waterway=="stream" or waterway=="river" or waterway=="canal") and (Find("intermittent")~="yes") then
+			addedLayer = true
 			Layer("waterway", false)
-			if Find("intermittent")=="yes" then AttributeNumeric("intermittent", 1) else AttributeNumeric("intermittent", 0) end
 			Attribute("class", waterway)
-		elseif roadsWithRef[highway] then
-			Layer("motorway", false)
-			Attribute("class", highway)
+			if (waterway~="river") or not name:find('River') then
+				MinZoom(13)
+			end
 		end
-		if name then Attribute("name", name) end
-		if ref then Attribute("ref", ref) end
+		if addedLayer then
+			if Holds("ref") then
+				Attribute("ref", Find("ref"))
+			end
+			if name then
+				Attribute("name", name)
+			end
+		end
 	end
 end
 
