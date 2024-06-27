@@ -18,7 +18,7 @@ osmconvert data/north-carolina-latest.osm.pbf -b=-81.623,35.725,-81.523,35.790 -
 osmconvert data/north-carolina-latest.osm.pbf -b=-81.5781,35.7619,-81.5293,35.7883 --complete-boundaries -o=data/vlp.osm.pbf
 
 docker run -v ./:/srv -i -t --rm tilemaker /srv/data/north-carolina-latest.osm.pbf --output=/srv/data/nc.pmtiles --config /srv/tilemaker-allpaths.json --process /srv/tilemaker-allpaths.lua
-docker run -v ./:/srv -i -t --rm tilemaker /srv/data/burke.osm.pbf --output=/srv/data/burke.pmtiles --config /srv/tilemaker-allpaths.json --process /srv/tilemaker-allpaths.lua
+docker run -v ./:/srv -i -t --rm tilemaker /srv/data/north-carolina-latest.osm.pbf --output=/srv/data/burke.pmtiles --config /srv/tilemaker-allpaths.json --process /srv/tilemaker-allpaths.lua
 docker run -v ./:/srv -i -t --rm tilemaker /srv/data/valdese.osm.pbf --output=/srv/data/valdese.pmtiles --config /srv/tilemaker-allpaths.json --process /srv/tilemaker-allpaths.lua
 docker run -v ./:/srv -i -t --rm tilemaker /srv/data/vlp.osm.pbf --output=/srv/data/vlp.pmtiles --config /srv/tilemaker-allpaths.json --process /srv/tilemaker-allpaths.lua
 
@@ -26,8 +26,7 @@ docker run -v ./:/srv -i -t --rm tilemaker /srv/data/vlp.osm.pbf --output=/srv/d
 docker run -v ./:/srv -i -t --rm tilemaker /srv/data/valdese-area.osm.pbf --output=/srv/data/valdese-area.pmtiles --config /srv/tilemaker-vlp.json --process /srv/tilemaker-vlp.lua
 
 # burke-river-trail (brt) map
-docker run -v ./:/srv -i -t --rm tilemaker /srv/data/burke.osm.pbf --output=/srv/data/brt.pmtiles --config /srv/tilemaker-brt.json --process /srv/tilemaker-brt.lua
-docker run -v ./:/srv -i -t --rm tilemaker /srv/data/north-carolina-latest.osm.pbf --output=/srv/data/brt-nc.pmtiles --config /srv/tilemaker-brt.json --process /srv/tilemaker-brt.lua
+docker run -v ./:/srv -i -t --rm tilemaker /srv/data/north-carolina-latest.osm.pbf --output=/srv/data/brt.pmtiles --config /srv/tilemaker-brt.json --process /srv/tilemaker-brt.lua
 
 #pmtiles convert valdese.mbtiles valdese.pmtiles
 #pmtiles convert burke.mbtiles burke.pmtiles

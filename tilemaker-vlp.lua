@@ -34,6 +34,14 @@ showPlaceName   = Set { "town", "city", "municipality" }
 -- Process node tags
 node_keys = { "place","tourism","waterway" }
 
+function attribute_function(attr,layer)
+	if layer == 'citylimits' then
+		return {county=attr['countyname'],name=attr['municipalb'],since=attr['year_incorporated']}
+	end
+
+	return attr
+end
+
 -- Assign nodes to a layer, and set attributes, based on OSM tags
 function node_function(node)
 	local place  = Find("place")
@@ -90,6 +98,10 @@ function way_function()
 				local ref = Find("ref")
 				Attribute("ref", ref)
 			end
+
+			if not majorRoadValues[objclass] then
+				MinZoom(12)
+			end
 		end			
 	elseif Find("natural")=="water" then
 		local c = (Find("water")=="river") and "river" or "lake"
@@ -115,9 +127,6 @@ function way_function()
 		if name then
 			Attribute("name", name)
 		end
-	--elseif leisure=="park" and Holds("name") then
-	--	Layer("park", true)
-	--	Attribute("class", leisure)
 	elseif showBuildings[building] then
 		Layer("building", true)
 		Attribute("class", building)

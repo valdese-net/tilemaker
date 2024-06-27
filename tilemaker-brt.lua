@@ -20,6 +20,14 @@ showPlaceName   = Set { "town", "city", "municipality", "village", "hamlet" }
 brtMorphPlace = {["Longview"] = "Long View"}
 brtPlaces = Set {"Glen Alpine","Morganton","Drexel","Valdese","Rutherford College","Connelly Springs","Rhodhiss","Long View","Hildebran"}
 
+function attribute_function(attr,layer)
+	if layer == 'citylimits' then
+		return {county=attr['countyname'],name=attr['municipalb'],since=attr['year_incorporated']}
+	end
+
+	return attr
+end
+
 -- Process node tags
 node_keys = { "place","tourism","waterway" }
 
@@ -50,7 +58,7 @@ function way_function()
 	local highway  = Find("highway")
 	local name = getAsciiName()
 
-	if Holds("name") or Holds("ref") then
+	if (Holds("name") or Holds("ref")) and Intersects("burke") then
 		if highway~="" then
 			local _,_,linked_path = highway:find("^(%l+)_link")
 			if linked_path then
@@ -78,7 +86,7 @@ function way_function()
 			Layer("waterway", false)
 			Attribute("class", waterway)
 			if (waterway~="river") or not name:find('River') then
-				MinZoom(13)
+				MinZoom(14)
 			end
 		end
 		if addedLayer then

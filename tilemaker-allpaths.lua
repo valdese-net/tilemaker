@@ -36,17 +36,31 @@ mainRoadValues  = Set { "secondary", "motorway_link", "trunk_link", "primary_lin
 midRoadValues   = Set { "tertiary", "tertiary_link" }
 minorRoadValues = Set { "unclassified", "residential", "road", "living_street" }
 roadsWithRef    = Set { "motorway", "primary" }
-trackValues     = Set { "track" }
+trackValues     = Set { "track", "service" }
 pathValues      = Set { "footway", "cycleway", "bridleway", "path", "steps", "pedestrian" }
 pavedValues     = Set { "paved", "asphalt", "cobblestone", "concrete", "concrete:lanes", "concrete:plates", "metal", "paving_stones", "sett", "unhewn_cobblestone", "wood" }
 showBuildings   = Set { "school", "public", "government", "fire_station", "industrial", "warehouse" }
-showPlaceName   = Set { "town", "city", "municipality" }
+showPlaceName   = Set { "town", "city", "municipality", "village", "hamlet" }
+ManMades		= Set { "bridge", "pier" }
+function init_function(name)
+	print(name, '<- init_function')
+end
+
+function attribute_function(attr,layer)
+	if layer == 'citylimits' then
+		return {county=attr['countyname'],name=attr['municipalb'],since=attr['year_incorporated']}
+	end
+
+	return attr
+end
 
 -- Process node tags
 node_keys = { "place","tourism","waterway" }
 
 -- Assign nodes to a layer, and set attributes, based on OSM tags
 function node_function(node)
+	if not Intersects("burke") then return end
+
 	local place  = Find("place")
 	local name = getAsciiName()
 
@@ -67,11 +81,23 @@ function way_function()
 	local building = Find("building")
 	local landuse  = Find("landuse")
 	local leisure  = Find("leisure")
+	local man_made = Find("man_made")
 
 	if leisure=="park" and Holds("name") then
 		Layer("park", true)
 		Attribute("class", leisure)
+		Attribute("name", Find("name"))
 		MinZoom(GetMinZoomByArea())
+		return
+	end
+
+	if not Intersects("burke") then return end
+
+	if ManMades[man_made] then
+		Layer("manmade", true)
+		Attribute("class", man_made)
+		MinZoom(GetMinZoomByArea())
+		return
 	end
 
 	-- Roads
@@ -87,6 +113,10 @@ function way_function()
 		local minzoom = 99
 		local objtype = "road"
 		local objclass = highway
+
+		if Intersects("vlp") then
+			print(highway, Find("name"))
+		end
 
 		if majorRoadValues[highway] then minzoom = 4 end
 		if highway == "trunk" then minzoom = 5

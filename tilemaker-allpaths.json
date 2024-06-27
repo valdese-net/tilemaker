@@ -1,15 +1,20 @@
 {
 	"layers": {
-		"building":		{ "minzoom":  11, "maxzoom": 14 },
-		"road":			{ "minzoom":  8, "maxzoom": 14, "simplify_below": 13, "simplify_level": 0.0003, "simplify_ratio": 2.0 },
-		"path":			{ "minzoom":  8, "maxzoom": 14, "simplify_below": 13, "simplify_level": 0.0003, "simplify_ratio": 2.0 },
-		"park":			{ "minzoom":  8, "maxzoom": 14, "simplify_below": 12, "simplify_level": 0.0003, "simplify_ratio": 2.0 },
-		"water":		{ "minzoom":  8, "maxzoom": 14, "simplify_below": 12, "simplify_level": 0.0003, "simplify_ratio": 2.0 },
-		"waterway":		{ "minzoom":  8, "maxzoom": 14, "simplify_below": 12, "simplify_level": 0.0003, "simplify_ratio": 2.0 },
+		"nc":			{ "minzoom": 4, "maxzoom": 12, "simplify_below": 12, "simplify_level": 0.0003, "simplify_ratio": 2.0, "source":"/srv/data/nc-boundary.geojson", "source_columns": true },
+		"burke":		{ "minzoom": 4, "maxzoom": 14, "simplify_below": 12, "simplify_level": 0.0003, "simplify_ratio": 2.0, "source":"/srv/data/burke-boundary.geojson", "source_columns": ["NAME"], "index": true, "index_column": "NAME" },
+		"citylimits":	{ "minzoom": 6, "maxzoom": 14, "simplify_below": 12, "simplify_level": 0.0003, "simplify_ratio": 2.0, "source":"/srv/data/burkenc-municipal-boundaries.geojson", "source_columns": true },
+		"vlp":			{ "minzoom": 6, "maxzoom": 14, "simplify_below": 12, "simplify_level": 0.0003, "simplify_ratio": 2.0, "source":"/srv/data/vlp-parcels.geojson", "source_columns": true, "index": true, "index_column": "pin" },
+		"building":		{ "minzoom": 9, "maxzoom": 14 },
+		"road":			{ "minzoom": 8, "maxzoom": 14, "simplify_below": 13, "simplify_level": 0.0003, "simplify_ratio": 2.0 },
+		"path":			{ "minzoom": 8, "maxzoom": 14, "simplify_below": 13, "simplify_level": 0.0003, "simplify_ratio": 2.0 },
+		"park":			{ "minzoom": 8, "maxzoom": 14, "simplify_below": 12, "simplify_level": 0.0003, "simplify_ratio": 2.0 },
+		"manmade":		{ "minzoom":10, "maxzoom": 14, "simplify_below": 12, "simplify_level": 0.0003, "simplify_ratio": 2.0 },
+		"water":		{ "minzoom": 8, "maxzoom": 14, "simplify_below": 12, "simplify_level": 0.0003, "simplify_ratio": 2.0 },
+		"waterway":		{ "minzoom": 8, "maxzoom": 14, "simplify_below": 12, "simplify_level": 0.0003, "simplify_ratio": 2.0 },
 		"label":		{ "minzoom": 9, "maxzoom": 14 }
 	},
 	"settings": {
-		"minzoom": 8,
+		"minzoom": 4,
 		"maxzoom": 14,
 		"basezoom": 14,
 		"include_ids": false,
