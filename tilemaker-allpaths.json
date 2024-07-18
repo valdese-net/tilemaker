@@ -18,7 +18,7 @@
 		"maxzoom": 14,
 		"basezoom": 14,
 		"include_ids": false,
-		"name": "Tilemaker test",
+		"name": "All Burke NC Tiles",
 		"version": "0.1",
 		"description": "Vector tiles from OSM",
 		"compress": "gzip"

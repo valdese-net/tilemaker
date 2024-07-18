@@ -115,7 +115,12 @@ function way_function()
 		local objclass = highway
 
 		if Intersects("vlp") then
-			print(highway, Find("name"))
+			local name = Find("name")
+			print(name, objtype, objclass)
+			Layer(objtype, false)
+			Attribute("class", objclass)
+			Attribute("name", name)
+			return
 		end
 
 		if majorRoadValues[highway] then minzoom = 4 end

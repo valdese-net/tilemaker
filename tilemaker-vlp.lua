@@ -17,6 +17,14 @@ function Set(list)
 	return set
 end
 
+function listContainsMatch(list,s)
+	for _,s2 in pairs(list) do
+		local m = string.find(s,s2)
+		if m == 1 then return true end
+	end
+	return false
+end
+
 -- The height of one floor, in meters
 BUILDING_FLOOR_HEIGHT = 3.66
 
@@ -29,7 +37,12 @@ trackValues     = Set { "track" }
 pathValues      = Set { "footway", "cycleway", "bridleway", "path", "steps", "pedestrian" }
 pavedValues     = Set { "paved", "asphalt", "cobblestone", "concrete", "concrete:lanes", "concrete:plates", "metal", "paving_stones", "sett", "unhewn_cobblestone", "wood" }
 showBuildings   = Set { "school", "public", "government", "fire_station", "industrial", "warehouse" }
-showPlaceName   = Set { "town", "city", "municipality" }
+showPlaceName   = Set { "town", "city", "municipality", "village", "hamlet" }
+showWaterTypes	= Set { "lake", "river" }
+burkePlaces		= Set { "Glen Alpine","Morganton","Drexel","Valdese","Rutherford College","Connelly Springs","Rhodhiss","Long View","Hildebran" }
+showWaterways	= Set { "stream", "river", "canal" }
+forceRoads		= {"Malcolm B","Rutherford College","Eldred St","Laurel St","Church St","Carolina St"}
+
 
 -- Process node tags
 node_keys = { "place","tourism","waterway" }
@@ -47,7 +60,7 @@ function node_function(node)
 	local place  = Find("place")
 	local name = getAsciiName()
 
-	if showPlaceName[place] and name then
+	if showPlaceName[place] and burkePlaces[name] then
 		Layer("label", false)
 		Attribute("class", "place")
 		Attribute("subclass", place)
@@ -64,8 +77,17 @@ function way_function()
 	local building = Find("building")
 	local landuse  = Find("landuse")
 	local leisure  = Find("leisure")
+	local name = getAsciiName()
+	local vlp_areas = Set(FindIntersecting("vlp-area"))
+	local closetoVLP = vlp_areas["vlp-area"]
 
-	if highway~="" and (Holds("name") or Holds("ref")) then
+	if highway~="" and Holds("ref") then
+		name = Find("ref")
+	end
+
+	if not Intersects("burke") then return end
+
+	if highway~="" and (name or Holds("ref")) then
 		local _,_,linked_path = highway:find("^(%l+)_link")
 		if linked_path then
 			highway = linked_path
@@ -77,57 +99,34 @@ function way_function()
 		local objtype = "road"
 		local objclass = highway
 
-		if pathValues[highway] then
-			objtype = "path"
-		elseif trackValues[highway] then
-			objtype = "path"
+		if pathValues[highway] or trackValues[highway] then return end
+		if not closetoVLP and not majorRoadValues[highway] then
+			if not name or not listContainsMatch(forceRoads,name) then return end
 		end
 
-		if objtype ~= "path" then
-			Layer(objtype, false)
-			--if highway=="unclassified" or highway=="residential" then highway="minor" end
-			Attribute("class", objclass)
-			if linked_path then AttributeNumeric("ramp",1) end
+		Layer(objtype, false)
+		--if highway=="unclassified" or highway=="residential" then highway="minor" end
+		Attribute("class", objclass)
+		if linked_path then AttributeNumeric("ramp",1) end
 
-			local name = getAsciiName()
-			if name then
-				Attribute("name", name)
-			end
-
-			if roadsWithRef[objclass] and Holds("ref") and not linked_path then
-				local ref = Find("ref")
-				Attribute("ref", ref)
-			end
-
-			if not majorRoadValues[objclass] then
-				MinZoom(12)
-			end
-		end			
-	elseif Find("natural")=="water" then
-		local c = (Find("water")=="river") and "river" or "lake"
+		if not majorRoadValues[objclass] then
+			MinZoom(12)
+		end
+		if name then Attribute("name", name) end
+	elseif (Find("natural")=="water") then
+		if not vlp_areas["water-area"] then return end
+		local c = Find("water")
 		Layer("water", true)
-		Attribute("class", c)
-		local name = getAsciiName()
-		if name then
-			if (c == "lake") then
-				LayerAsCentroid("label","centroid")
-			else
-				Layer("label", false)
-			end
-			
-			Attribute("class", "water")
-			Attribute("subclass", c)
-			Attribute("name", name)
-		end
-	elseif waterway=="stream" or waterway=="river" or waterway=="canal" then
+		if c ~= "" then Attribute("class", c) end
+	elseif showWaterways[waterway] then
+		if not vlp_areas["water-area"] then return end
 		Layer("waterway", false)
 		if Find("intermittent")=="yes" then AttributeNumeric("intermittent", 1) else AttributeNumeric("intermittent", 0) end
 		Attribute("class", waterway)
-		local name = getAsciiName()
-		if name then
-			Attribute("name", name)
-		end
+		if name then Attribute("name", name) end
 	elseif showBuildings[building] then
+		if not closetoVLP then return end
+
 		Layer("building", true)
 		Attribute("class", building)
 		SetBuildingHeightAttributes()

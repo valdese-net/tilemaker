@@ -4,6 +4,10 @@ mkdir -p data
 # fetch the latest for North Carolina https://download.geofabrik.de/north-america/us/north-carolina-latest.osm.pbf
 wget https://download.geofabrik.de/north-america/us/north-carolina-latest.osm.pbf -q --show-progress -N -P ./data
 
+# alternatively, use https://download.geofabrik.de/north-america/us-south.html
+wget https://download.geofabrik.de/north-america/us-south-latest.osm.pbf -q --show-progress -N -P ./data
+
+
 # terrain USGS 1/3 Arc Second
 # https://github.com/nst-guide/terrain
 # wget https://prd-tnm.s3.amazonaws.com/StagedProducts/Elevation/13/TIFF/historical/n36w082/USGS_13_n36w082_20220512.tif  -q --show-progress -N -P ./data
@@ -27,6 +31,7 @@ docker run -v ./:/srv -i -t --rm tilemaker /srv/data/valdese-area.osm.pbf --outp
 
 # burke-river-trail (brt) map
 docker run -v ./:/srv -i -t --rm tilemaker /srv/data/north-carolina-latest.osm.pbf --output=/srv/data/brt.pmtiles --config /srv/tilemaker-brt.json --process /srv/tilemaker-brt.lua
+docker run -v ./:/srv -i -t --rm tilemaker /srv/data/north-carolina-latest.osm.pbf --output=/srv/data/vlp.pmtiles --config /srv/tilemaker-vlp.json --process /srv/tilemaker-vlp.lua
 
 #pmtiles convert valdese.mbtiles valdese.pmtiles
 #pmtiles convert burke.mbtiles burke.pmtiles
