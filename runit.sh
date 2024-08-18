@@ -38,6 +38,7 @@ docker run -v ./:/srv -i -t --rm tilemaker /srv/data/north-carolina-latest.osm.p
 
 # create parcel tiles to a precision of 6 inches
 tippecanoe -f -o data/valdese-parcels.pmtiles -l vparcels -n "Valdese Parcels" -Z10 -z16 data/valdese-parcels.geojson
+tippecanoe -f -o data/burke-parcels.pmtiles -l parcels -n "Burke  Parcels" -zg data/parcels.geojson
 
 # convert shape file with Lambert_Conformal_Conic projection to geojson
 ogr2ogr -f GeoJSON -s_srs data/parcels/nc_burke_parcels_poly.prj -t_srs EPSG:4326 data/parcels.geojson data/parcels/nc_burke_parcels_poly.shp
@@ -48,3 +49,6 @@ ogr2ogr -f GeoJSON -s_srs data/states/cb_2023_us_state_500k.prj -t_srs EPSG:4326
 node extract-parcels-by-parno.js data/parcels.geojson valdese-parcels.txt > data/vlp-parcels.geojson
 node extract-parcels-by-parno.js data/parcels.geojson brt-parcels-private.txt > data/brt-parcels-private.geojson
 node extract-parcels-by-parno.js data/parcels.geojson brt-parcels-public.txt > data/brt-parcels-public.geojson
+
+# contours
+gdal_contour -a elev data/Valdese_n36w082_DEM.tif data/Valdese_Contour.shp -i 10.0
