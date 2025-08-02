@@ -36,14 +36,32 @@ docker run -v ./:/srv -i -t --rm tilemaker /srv/data/north-carolina-latest.osm.p
 #pmtiles convert valdese.mbtiles valdese.pmtiles
 #pmtiles convert burke.mbtiles burke.pmtiles
 
-# create parcel tiles to a precision of 6 inches
-tippecanoe -f -o data/valdese-parcels.pmtiles -l vparcels -n "Valdese Parcels" -Z10 -z16 data/valdese-parcels.geojson
-tippecanoe -f -o data/burke-parcels.pmtiles -l parcels -n "Burke  Parcels" -zg data/parcels.geojson
-
 # convert shape file with Lambert_Conformal_Conic projection to geojson
+# -lco STRING_QUOTING=IF_NEEDED
 ogr2ogr -f GeoJSON -s_srs data/parcels/nc_burke_parcels_poly.prj -t_srs EPSG:4326 data/parcels.geojson data/parcels/nc_burke_parcels_poly.shp
 ogr2ogr -f GeoJSON -s_srs data/counties/cb_2023_us_county_500k.prj -t_srs EPSG:4326 data/counties.geojson data/counties/cb_2023_us_county_500k.shp
 ogr2ogr -f GeoJSON -s_srs data/states/cb_2023_us_state_500k.prj -t_srs EPSG:4326 data/us-states.geojson data/states/cb_2023_us_state_500k.shp
+
+# using burke.gdb from https://www.burkenc.org/2495/Data-Sets
+ogrinfo data/burke.gdb
+ogrinfo -json -where "CITYLIM LIKE '%'" data/burke.gdb SiteStructureAddressPoints | more
+ogr2ogr -f GeoJSON -where "CITYLIM LIKE '%'" -select "PIN,CITYLIM,ETJ,STNUM,STREET_NAM,CITY,ZIPCODE" -t_srs EPSG:4326 /dev/stdout data/burke.gdb SiteStructureAddressPoints
+#
+ogr2ogr -f GeoJSON -t_srs EPSG:4326 -select "REID,PIN,PHYADDR_STR_NUM,PHYADDR_STR,PHYADDR_STR_TYPE,PHYADDR_CITY,PHYADDR_ZIP,PROPERTY_OWNER,TOWNSHIP,ETJ" data/burke-parcels.geojson data/burke.gdb PROD_PARCEL_VIEW_FC
+ogr2ogr -f GeoJSON -t_srs EPSG:4326 -select "PIN,ADDRESS,CITY,ZIPCODE,CITYLIM,ETJ" data/burke-addr-points.geojson data/burke.gdb SiteStructureAddressPoints
+ogr2ogr -f GeoJSON -t_srs EPSG:4326 -select "SRNUM,CLASS,FULLNAME" data/burke-roads.geojson data/burke.gdb RoadCenterlines
+ogr2ogr -f GeoJSON -t_srs EPSG:4326 data/burke-city-limits.geojson data/burke.gdb city_limits
+rm data/burke-map.pmtiles
+tippecanoe -Z6 -z16 --coalesce-densest-as-needed --simplify-only-low-zooms -f -o data/burke-map.pmtiles \
+	--named-layer='nc:data/nc-boundary.geojson' \
+	--named-layer='burke:data/burke-boundary.geojson' --named-layer='citynames:burke-cities.json' \
+	--named-layer='city:data/burke-city-limits.geojson' --named-layer='addresses:data/burke-addr-points.geojson' \
+	--named-layer='parcels:data/burke-parcels.geojson' --named-layer='roads:data/burke-roads.geojson'
+
+# create parcel tiles to a precision of 6 inches
+tippecanoe -f -o data/valdese-parcels.pmtiles -l vparcels -n "Valdese Parcels" -Z10 -z16 data/valdese-parcels.geojson
+tippecanoe -f -o data/burke-parcels.pmtiles -l parcels -n "Burke  Parcels" -Z6 -z16 data/parcels.geojson
+
 
 # extract park parcels
 node extract-parcels-by-parno.js data/parcels.geojson valdese-parcels.txt > data/vlp-parcels.geojson
@@ -51,4 +69,6 @@ node extract-parcels-by-parno.js data/parcels.geojson brt-parcels-private.txt > 
 node extract-parcels-by-parno.js data/parcels.geojson brt-parcels-public.txt > data/brt-parcels-public.geojson
 
 # contours
-gdal_contour -a elev data/Valdese_n36w082_DEM.tif data/Valdese_Contour.shp -i 10.0
+gdal_contour -a elev data/Valdese_n36w082_DEM.tif data/elev/Valdese_Contour.shp -i 2
+ogr2ogr -f GeoJSON -s_srs data/elev/Valdese_Contour.prj -t_srs EPSG:4326 data/Burke_Contour.geojson data/elev/Valdese_Contour.shp
+tippecanoe -f -o data/burke-contours.pmtiles -l contours -n "Burke Contours" -Z8 -z13 data/Burke_Contour.geojson
