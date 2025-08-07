@@ -1,10 +1,11 @@
 {"type":"FeatureCollection","features":[
 {"type":"Feature","properties":{"name":"Glen Alpine"},"geometry":{"type":"Point","coordinates":[-81.778793,35.727702]}},
 {"type":"Feature","properties":{"name":"Morganton"},"geometry":{"type":"Point","coordinates":[-81.685066,35.745119]}},
-{"type":"Feature","properties":{"name":"Drexel"},"geometry":{"type":"Point","coordinates":[-81.602669,35.757239]}},
+{"type":"Feature","properties":{"name":"Drexel"},"geometry":{"type":"Point","coordinates":[-81.605051,35.757474]}},
 {"type":"Feature","properties":{"name":"Valdese"},"geometry":{"type":"Point","coordinates":[-81.562843,35.74289]}},
 {"type":"Feature","properties":{"name":"Rutherford College"},"geometry":{"type":"Point","coordinates":[-81.523876,35.750552]}},
 {"type":"Feature","properties":{"name":"Connelly Springs"},"geometry":{"type":"Point","coordinates":[-81.502762,35.740382]}},
+{"type":"Feature","properties":{"name":"Rhodhiss"},"geometry":{"type":"Point","coordinates":[-81.432206,35.76711]}},
 {"type":"Feature","properties":{"name":"Hildebran"},"geometry":{"type":"Point","coordinates":[-81.421223,35.71488]}},
 {"type":"Feature","properties":{"name":"Long View"},"geometry":{"type":"Point","coordinates":[-81.39204,35.730767]}}
 ]}

@@ -54,7 +54,7 @@ ogr2ogr -f GeoJSON -t_srs EPSG:4326 data/burke-city-limits.geojson data/burke.gd
 rm data/burke-map.pmtiles
 tippecanoe -Z6 -z16 --coalesce-densest-as-needed --simplify-only-low-zooms -f -o data/burke-map.pmtiles \
 	--named-layer='nc:data/nc-boundary.geojson' \
-	--named-layer='burke:data/burke-boundary.geojson' --named-layer='citynames:burke-cities.json' \
+	--named-layer='burke:data/burke-boundary.geojson' --named-layer='citynames:burke-city-names.json' \
 	--named-layer='city:data/burke-city-limits.geojson' --named-layer='addresses:data/burke-addr-points.geojson' \
 	--named-layer='parcels:data/burke-parcels.geojson' --named-layer='roads:data/burke-roads.geojson'
 
