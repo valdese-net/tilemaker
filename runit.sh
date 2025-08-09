@@ -43,19 +43,24 @@ ogr2ogr -f GeoJSON -s_srs data/counties/cb_2023_us_county_500k.prj -t_srs EPSG:4
 ogr2ogr -f GeoJSON -s_srs data/states/cb_2023_us_state_500k.prj -t_srs EPSG:4326 data/us-states.geojson data/states/cb_2023_us_state_500k.shp
 
 # using burke.gdb from https://www.burkenc.org/2495/Data-Sets
-ogrinfo data/burke.gdb
-ogrinfo -json -where "CITYLIM LIKE '%'" data/burke.gdb SiteStructureAddressPoints | more
-ogr2ogr -f GeoJSON -where "CITYLIM LIKE '%'" -select "PIN,CITYLIM,ETJ,STNUM,STREET_NAM,CITY,ZIPCODE" -t_srs EPSG:4326 /dev/stdout data/burke.gdb SiteStructureAddressPoints
+ogrinfo -so data/burke_20250624.gdb.zip SiteStructureAddressPoints
+ogrinfo -json -where "CITYLIM LIKE '%'" data/data/burke_20250624.gdb.zip SiteStructureAddressPoints | more
+#ogr2ogr -f GeoJSON -t_srs EPSG:4326 -select "STNUM,PREDIR,STREET_NAM,TYPE,POSTDIR,UNITTYPE,UNIT,CITY,ZIPCODE,PIN,CITYLIM,ETJ" data/burke-addresses.geojson data/data/burke_20250624.gdb.zip SiteStructureAddressPoints
+ogr2ogr -f CSV -lco GEOMETRY=AS_XY -select "STNUM,PREDIR,STREET_NAM,TYPE,POSTDIR,UNITTYPE,UNIT,CITY,ZIPCODE,PIN,CITYLIM,ETJ" -t_srs EPSG:4326 data/burke-addresses.csv data/data/burke_20250624.gdb.zip SiteStructureAddressPoints
+
+ogrinfo -so data/data/burke_20250624.gdb.zip PROD_PARCEL_VIEW_FC | grep 'Geometry Column'
+ogr2ogr -f GeoJSON -sql "SELECT PIN,Shape FROM PROD_PARCEL_VIEW_FC" -t_srs EPSG:4326 data/burke-parcels2.geojson data/data/burke_20250624.gdb.zip
 #
-ogr2ogr -f GeoJSON -t_srs EPSG:4326 -select "REID,PIN,PHYADDR_STR_NUM,PHYADDR_STR,PHYADDR_STR_TYPE,PHYADDR_CITY,PHYADDR_ZIP,PROPERTY_OWNER,TOWNSHIP,ETJ" data/burke-parcels.geojson data/burke.gdb PROD_PARCEL_VIEW_FC
-ogr2ogr -f GeoJSON -t_srs EPSG:4326 -select "PIN,ADDRESS,CITY,ZIPCODE,CITYLIM,ETJ" data/burke-addr-points.geojson data/burke.gdb SiteStructureAddressPoints
-ogr2ogr -f GeoJSON -t_srs EPSG:4326 -select "SRNUM,CLASS,FULLNAME" data/burke-roads.geojson data/burke.gdb RoadCenterlines
-ogr2ogr -f GeoJSON -t_srs EPSG:4326 data/burke-city-limits.geojson data/burke.gdb city_limits
+ogr2ogr -f GeoJSON -where "PIN_EXT LIKE '000'" -t_srs EPSG:4326 -select "PIN,REID,PHYADDR_STR_NUM,PHYADDR_STR,PHYADDR_CITY" data/burke-parcels.geojson data/data/burke_20250624.gdb.zip PROD_PARCEL_VIEW_FC
+ogr2ogr -f GeoJSON -t_srs EPSG:4326 -select "SRNUM,CLASS,FULLNAME" data/burke-roads.geojson data/data/burke_20250624.gdb.zip RoadCenterlines
+ogr2ogr -f GeoJSON -t_srs EPSG:4326 data/burke-city-limits.geojson data/data/burke_20250624.gdb.zip city_limits
+
+php filter-duplicate-pins.php <  data/burke-parcels.geojson > data/burke-parcels2.geojson
+mv -f data/burke-parcels2.geojson data/burke-parcels.geojson
 rm data/burke-map.pmtiles
 tippecanoe -Z6 -z16 --coalesce-densest-as-needed --simplify-only-low-zooms -f -o data/burke-map.pmtiles \
-	--named-layer='nc:data/nc-boundary.geojson' \
-	--named-layer='burke:data/burke-boundary.geojson' --named-layer='citynames:burke-city-names.json' \
-	--named-layer='city:data/burke-city-limits.geojson' --named-layer='addresses:data/burke-addr-points.geojson' \
+	--named-layer='nc:data/nc-boundary.geojson' --named-layer='burke:data/burke-boundary.geojson' \
+	--named-layer='citynames:burke-city-names.json' --named-layer='city:data/burke-city-limits.geojson' \
 	--named-layer='parcels:data/burke-parcels.geojson' --named-layer='roads:data/burke-roads.geojson'
 
 # create parcel tiles to a precision of 6 inches
