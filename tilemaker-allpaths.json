@@ -1,9 +1,9 @@
 {
 	"layers": {
-		"nc":			{ "minzoom": 4, "maxzoom": 12, "simplify_below": 12, "simplify_level": 0.0003, "simplify_ratio": 2.0, "source":"/srv/data/nc-boundary.geojson", "source_columns": true },
-		"burke":		{ "minzoom": 4, "maxzoom": 14, "simplify_below": 12, "simplify_level": 0.0003, "simplify_ratio": 2.0, "source":"/srv/data/burke-boundary.geojson", "source_columns": ["NAME"], "index": true, "index_column": "NAME" },
-		"citylimits":	{ "minzoom": 6, "maxzoom": 14, "simplify_below": 12, "simplify_level": 0.0003, "simplify_ratio": 2.0, "source":"/srv/data/burkenc-municipal-boundaries.geojson", "source_columns": true },
-		"vlp":			{ "minzoom": 6, "maxzoom": 14, "simplify_below": 12, "simplify_level": 0.0003, "simplify_ratio": 2.0, "source":"/srv/data/vlp-parcels.geojson", "source_columns": true, "index": true, "index_column": "pin" },
+		"nc":			{ "minzoom": 4, "maxzoom": 12, "simplify_below": 12, "simplify_level": 0.0003, "simplify_ratio": 2.0, "source":"data/nc-boundary.geojson" },
+		"burke":		{ "minzoom": 4, "maxzoom": 14, "simplify_below": 12, "simplify_level": 0.0003, "simplify_ratio": 2.0, "source":"data/burke-boundary.geojson", "source_columns": ["NAME"], "index": true, "index_column": "NAME" },
+		"citylimits":	{ "minzoom": 6, "maxzoom": 14, "simplify_below": 12, "simplify_level": 0.0003, "simplify_ratio": 2.0, "source":"data/burkenc-municipal-boundaries.geojson", "source_columns": true },
+		"vlp":			{ "minzoom": 6, "maxzoom": 14, "simplify_below": 12, "simplify_level": 0.0003, "simplify_ratio": 2.0, "source":"data/vlp-parcels.geojson", "source_columns": true, "index": true, "index_column": "pin" },
 		"building":		{ "minzoom": 9, "maxzoom": 14 },
 		"road":			{ "minzoom": 8, "maxzoom": 14, "simplify_below": 13, "simplify_level": 0.0003, "simplify_ratio": 2.0 },
 		"path":			{ "minzoom": 8, "maxzoom": 14, "simplify_below": 13, "simplify_level": 0.0003, "simplify_ratio": 2.0 },

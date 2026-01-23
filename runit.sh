@@ -21,17 +21,17 @@ osmconvert data/north-carolina-latest.osm.pbf -b=-81.623,35.725,-81.523,35.790 -
 # alternate: -81.57286,35.75574 -81.53452,35.77947
 osmconvert data/north-carolina-latest.osm.pbf -b=-81.5781,35.7619,-81.5293,35.7883 --complete-boundaries -o=data/vlp.osm.pbf
 
-docker run -v ./:/srv -i -t --rm tilemaker /srv/data/north-carolina-latest.osm.pbf --output=/srv/data/nc.pmtiles --config /srv/tilemaker-allpaths.json --process /srv/tilemaker-allpaths.lua
-docker run -v ./:/srv -i -t --rm tilemaker /srv/data/north-carolina-latest.osm.pbf --output=/srv/data/burke.pmtiles --config /srv/tilemaker-allpaths.json --process /srv/tilemaker-allpaths.lua
-docker run -v ./:/srv -i -t --rm tilemaker /srv/data/valdese.osm.pbf --output=/srv/data/valdese.pmtiles --config /srv/tilemaker-allpaths.json --process /srv/tilemaker-allpaths.lua
-docker run -v ./:/srv -i -t --rm tilemaker /srv/data/vlp.osm.pbf --output=/srv/data/vlp.pmtiles --config /srv/tilemaker-allpaths.json --process /srv/tilemaker-allpaths.lua
+tilemaker data/north-carolina-latest.osm.pbf --output=data/nc.pmtiles --config tilemaker-allpaths.json --process tilemaker-allpaths.lua
+tilemaker data/north-carolina-latest.osm.pbf --output=data/burke.pmtiles --config tilemaker-allpaths.json --process tilemaker-allpaths.lua
+tilemaker data/valdese.osm.pbf --output=data/valdese.pmtiles --config tilemaker-allpaths.json --process tilemaker-allpaths.lua
+tilemaker data/vlp.osm.pbf --output=data/vlp.pmtiles --config tilemaker-allpaths.json --process tilemaker-allpaths.lua
 
 # valdese-area generated via https://app.protomaps.com/
-docker run -v ./:/srv -i -t --rm tilemaker /srv/data/valdese-area.osm.pbf --output=/srv/data/valdese-area.pmtiles --config /srv/tilemaker-vlp.json --process /srv/tilemaker-vlp.lua
+tilemaker data/valdese-area.osm.pbf --output=data/valdese-area.pmtiles --config tilemaker-vlp.json --process tilemaker-vlp.lua
 
 # burke-river-trail (brt) map
-docker run -v ./:/srv -i -t --rm tilemaker /srv/data/north-carolina-latest.osm.pbf --output=/srv/data/brt.pmtiles --config /srv/tilemaker-brt.json --process /srv/tilemaker-brt.lua
-docker run -v ./:/srv -i -t --rm tilemaker /srv/data/north-carolina-latest.osm.pbf --output=/srv/data/vlp.pmtiles --config /srv/tilemaker-vlp.json --process /srv/tilemaker-vlp.lua
+tilemaker data/north-carolina-latest.osm.pbf --output=data/brt_v2.pmtiles --config tilemaker-brt.json --process tilemaker-brt.lua
+tilemaker data/north-carolina-latest.osm.pbf --output=data/vlp.pmtiles --config tilemaker-vlp.json --process tilemaker-vlp.lua
 
 #pmtiles convert valdese.mbtiles valdese.pmtiles
 #pmtiles convert burke.mbtiles burke.pmtiles
@@ -94,7 +94,32 @@ node extract-parcels-by-parno.js data/parcels.geojson valdese-parcels.txt > data
 node extract-parcels-by-parno.js data/parcels.geojson brt-parcels-private.txt > data/brt-parcels-private.geojson
 node extract-parcels-by-parno.js data/parcels.geojson brt-parcels-public.txt > data/brt-parcels-public.geojson
 
-# contours
-gdal_contour -a elev data/Valdese_n36w082_DEM.tif data/elev/Valdese_Contour.shp -i 2
-ogr2ogr -f GeoJSON -s_srs data/elev/Valdese_Contour.prj -t_srs EPSG:4326 data/Burke_Contour.geojson data/elev/Valdese_Contour.shp
-tippecanoe -f -o data/burke-contours.pmtiles -l contours -n "Burke Contours" -Z8 -z13 data/Burke_Contour.geojson
+gdal_translate -of GTiff -co "TILED=YES" data/dem/burke-DEM03.tif data/burke-tiled.tif
+gdal_translate data/dem/burke-DEM03.tif data/cog.tif -co TILED=YES -co COMPRESS=DEFLATE
+gdaladdo -r average data/cog.tif 2 4 8 16 32   
+
+# contours, ogr2ogr can optionally -simplify 0.000015 
+gdalinfo data/dem/burke-DEM03.tif
+ogr2ogr -s_srs EPSG:4326 -t_srs EPSG:4326 data/elev/vlp-region.shp ./vlp-region.geojson
+
+# warp DEM data to valdese-lake-park area, might need -r bilinear 
+gdalwarp -t_srs EPSG:4326 -te -81.579752 35.756578 -81.531515 35.779734 data/dem/burke-DEM03.tif data/vlp-DEM03-box.tif
+
+# down sample the data to reduce noisy contour edges, then upscale using cubic spline to complete the effect
+gdalwarp -overwrite -ts 1024 0 -r lanczos data/vlp-DEM03-box.tif data/vlp-DEM03a.tif
+gdalwarp -overwrite -ts 4096 0 -r cubicspline -cutline data/elev/vlp-region.shp data/vlp-DEM03a.tif data/vlp-DEM03.tif
+
+# generate contours for every 10 feet of elevation, then remove short segments
+gdal_contour -a elev data/vlp-DEM03.tif  data/elev/vlp_Contour.shp -i 10
+ogr2ogr -overwrite -dialect SQLITE data/elev/vlp_Contour2.shp data/elev/vlp_Contour.shp -sql "SELECT * FROM  vlp_Contour WHERE ST_Length(GEOMETRY) > 0.001"
+ogr2ogr -f GeoJSON data/vlp-Contour.geojson data/elev/vlp_Contour2.shp
+tippecanoe -f -o data/vlp-contours.pmtiles -l contours -n "VLP Contours" -Z8 -z13 data/vlp-Contour.geojson
+
+gdal_translate data/vlp-DEM03.tif data/vlp-cog.tif -co TILED=YES -co COMPRESS=DEFLATE
+gdaldem hillshade data/vlp-DEM03.tif data/vlp-DEM03.png
+gdaldem hillshade data/vlp-DEM03.tif data/vlp-DEM03.jpg
+
+# 2 meter DEM for Valdese area (n36w082) from USGS
+gdal_contour -a elev data/Valdese_n36w082_DEM.tif data/elev/n36w082_Contour.shp -i 2
+ogr2ogr -f GeoJSON -s_srs data/elev/n36w082_Contour.prj -t_srs EPSG:4326 data/n36w082_Contour.geojson data/elev/n36w082_Contour.shp
+tippecanoe -f -o data/burke-area-contours.pmtiles -l contours -n "Burke Contours" -Z8 -z13 data/n36w082_Contour.geojson
