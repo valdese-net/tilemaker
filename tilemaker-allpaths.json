@@ -1,26 +1,28 @@
 {
 	"layers": {
-		"nc":			{ "minzoom": 4, "maxzoom": 12, "simplify_below": 12, "simplify_level": 0.0003, "simplify_ratio": 2.0, "source":"data/nc-boundary.geojson" },
-		"burke":		{ "minzoom": 4, "maxzoom": 14, "simplify_below": 12, "simplify_level": 0.0003, "simplify_ratio": 2.0, "source":"data/burke-boundary.geojson", "source_columns": ["NAME"], "index": true, "index_column": "NAME" },
-		"citylimits":	{ "minzoom": 6, "maxzoom": 14, "simplify_below": 12, "simplify_level": 0.0003, "simplify_ratio": 2.0, "source":"data/burkenc-municipal-boundaries.geojson", "source_columns": true },
-		"vlp":			{ "minzoom": 6, "maxzoom": 14, "simplify_below": 12, "simplify_level": 0.0003, "simplify_ratio": 2.0, "source":"data/vlp-parcels.geojson", "source_columns": true, "index": true, "index_column": "pin" },
-		"building":		{ "minzoom": 9, "maxzoom": 14 },
-		"road":			{ "minzoom": 8, "maxzoom": 14, "simplify_below": 13, "simplify_level": 0.0003, "simplify_ratio": 2.0 },
-		"path":			{ "minzoom": 8, "maxzoom": 14, "simplify_below": 13, "simplify_level": 0.0003, "simplify_ratio": 2.0 },
-		"park":			{ "minzoom": 8, "maxzoom": 14, "simplify_below": 12, "simplify_level": 0.0003, "simplify_ratio": 2.0 },
-		"manmade":		{ "minzoom":10, "maxzoom": 14, "simplify_below": 12, "simplify_level": 0.0003, "simplify_ratio": 2.0 },
-		"water":		{ "minzoom": 8, "maxzoom": 14, "simplify_below": 12, "simplify_level": 0.0003, "simplify_ratio": 2.0 },
-		"waterway":		{ "minzoom": 8, "maxzoom": 14, "simplify_below": 12, "simplify_level": 0.0003, "simplify_ratio": 2.0 },
-		"label":		{ "minzoom": 9, "maxzoom": 14 }
+		"nc":			{ "minzoom": 2, "maxzoom": 12, "simplify_below": 12, "simplify_level": 0.0003, "simplify_ratio": 2.0, "source":"data/nc-boundary.geojson" },
+		"burke":		{ "minzoom": 2, "maxzoom": 13, "simplify_below": 12, "simplify_level": 0.0003, "simplify_ratio": 2.0, "source":"data/burke-boundary.geojson", "source_columns": ["NAME"], "index": true, "index_column": "NAME" },
+		"citylimits":	{ "minzoom": 6, "maxzoom": 13, "simplify_below": 12, "simplify_level": 0.0003, "simplify_ratio": 2.0, "source":"data/burkenc-municipal-boundaries.geojson", "source_columns": true, "index": true, "index_column": "NAME" },
+		"building":		{ "minzoom": 9, "maxzoom": 13 },
+		"aero":			{ "minzoom": 8, "maxzoom": 13 },
+		"rail":			{ "minzoom": 8, "maxzoom": 13, "simplify_below": 13, "simplify_level": 0.0003, "simplify_ratio": 2.0 },
+		"road":			{ "minzoom": 8, "maxzoom": 13, "simplify_below": 13, "simplify_level": 0.0003, "simplify_ratio": 2.0 },
+		"path":			{ "minzoom": 8, "maxzoom": 13, "simplify_below": 13, "simplify_level": 0.0003, "simplify_ratio": 2.0 },
+		"park":			{ "minzoom": 8, "maxzoom": 13, "simplify_below": 12, "simplify_level": 0.0003, "simplify_ratio": 2.0 },
+		"manmade":		{ "minzoom":10, "maxzoom": 13, "simplify_below": 12, "simplify_level": 0.0003, "simplify_ratio": 2.0 },
+		"water":		{ "minzoom": 8, "maxzoom": 13, "simplify_below": 12, "simplify_level": 0.0003, "simplify_ratio": 2.0 },
+		"waterway":		{ "minzoom": 8, "maxzoom": 13, "simplify_below": 12, "simplify_level": 0.0003, "simplify_ratio": 2.0 },
+		"label":		{ "minzoom": 9, "maxzoom": 13 }
 	},
 	"settings": {
-		"minzoom": 4,
-		"maxzoom": 14,
-		"basezoom": 14,
+		"minzoom": 0,
+		"maxzoom": 13,
+		"basezoom": 13,
 		"include_ids": false,
-		"name": "All Burke NC Tiles",
-		"version": "0.1",
+		"name": "Burke NC Map",
+		"version": "0.3",
 		"description": "Vector tiles from OSM",
-		"compress": "gzip"
+		"compress": "gzip",
+		"metadata": {"attribution": "© OpenStreetMap contributors"}
 	}
 }

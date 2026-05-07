@@ -1,0 +1,21 @@
+{
+	"layers": {
+		"nc":			{ "minzoom": 6, "maxzoom": 12, "simplify_below": 12, "simplify_level": 0.0003, "simplify_ratio": 2.0, "source":"data/nc-boundary.geojson" },
+		"burke":		{ "minzoom": 6, "maxzoom": 14, "simplify_below": 12, "simplify_level": 0.0003, "simplify_ratio": 2.0, "source":"data/burke-boundary.geojson" },
+		"citylimits":	{ "minzoom": 6, "maxzoom": 14, "simplify_below": 12, "simplify_level": 0.0003, "simplify_ratio": 2.0, "source":"data/burkenc-municipal-boundaries.geojson", "source_columns": true },
+		"vlp":			{ "minzoom": 6, "maxzoom": 14, "simplify_below": 12, "simplify_level": 0.0003, "simplify_ratio": 2.0, "source":"data/vlp-parcels.geojson" },
+		"geolines":		{ "minzoom": 0, "maxzoom": 6 },
+		"countries":	{ "minzoom": 0, "maxzoom": 6 },
+		"centroids":	{ "minzoom": 0, "maxzoom": 6 }
+	},
+	"settings": {
+		"minzoom": 1,
+		"maxzoom": 14,
+		"basezoom": 1,
+		"include_ids": false,
+		"name": "Earth down to Burke NC Tiles",
+		"version": "0.1",
+		"description": "Nnatural Earth down to Burke NC",
+		"compress": "gzip"
+	}
+}

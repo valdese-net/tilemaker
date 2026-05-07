@@ -1,0 +1,30 @@
+{
+	"Lua.diagnostics.globals": [
+		"attribute_function",
+		"exit_function",
+		"init_function",
+		"node_function",
+		"node_keys",
+		"relation_function",
+		"relation_scan_function",
+		"way_function",
+		"way_keys",
+		"AllKeys",
+		"AllTags",
+		"Area",
+		"Attribute",
+		"Centroid",
+		"Find",
+		"Holds",
+		"IsClosed",
+		"IsMultiPolygon",
+		"Layer",
+		"LayerAsCentroid",
+		"Length",
+		"MinZoom",
+		"AttributeNumeric",
+		"FindIntersecting",
+		"Intersects"
+	],
+	"Lua.workspace.checkThirdParty": ""
+}

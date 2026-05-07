@@ -29,12 +29,33 @@ tilemaker data/vlp.osm.pbf --output=data/vlp.pmtiles --config tilemaker-allpaths
 # valdese-area generated via https://app.protomaps.com/
 tilemaker data/valdese-area.osm.pbf --output=data/valdese-area.pmtiles --config tilemaker-vlp.json --process tilemaker-vlp.lua
 
+# burke nc parcel map
+ogrinfo -so data/burke_20250624.gdb.zip PROD_PARCEL_VIEW_FC
+ogr2ogr -f GeoJSON -where "PARCEL_PK > 0" -t_srs EPSG:4326 -select "PARCEL_PK,REID,PIN,PIN_EXT,LOCATION_ADDR,PHYADDR_CITY,PHYADDR_ZIP" data/burke-parcels.geojson data/burke_20250624.gdb.zip PROD_PARCEL_VIEW_FC
+ogr2ogr -f GeoJSON -t_srs EPSG:4326 data/burke-parcels.geojson data/burke_20250624.gdb.zip PROD_PARCEL_VIEW_FC
+php filter-burke-parcels.php <  data/burke-parcels.geojson > data/burke-parcels2.geojson
+tippecanoe -f -Z12 -z12 -y PARCEL_PK -o data/_burke-parcels.pmtiles --named-layer='parcels:data/burke-parcels.geojson'
+
+
+# tilemaker data/globe.mbtiles --output=data/globe2burke.pmtiles --config tilemaker-globe.json --process tilemaker-globe.lua
+# sqlite3 maplibre.mbtiles "SELECT COUNT(*) FROM tiles WHERE tile_data IS NULL;"   
+ogr2ogr -select "ADM0_A3" -f GeoJSON data/countries.geojson /mnt/c/bin/mapd/nearth_50m_cultural/ne_50m_admin_0_countries_lakes.shp
+tippecanoe -Z0 -z4 -o data/globe.pmtiles --named-layer='countries:data/countries.geojson' --named-layer='parallels:parallels.geojson'
+tile-join -o data/burke-globe.pmtiles data/globe.pmtiles data/burke.pmtiles
+tippecanoe -f -Z6 -z12 -pn -ac -o data/brta.pmtiles \
+	-y name -y REID -y PIN -y PIN_EXT -y FULLNAME -y CLASS \
+	--named-layer='nc:data/nc-boundary.geojson' --named-layer='burke:data/burke-boundary.geojson' \
+	--named-layer='water:data/BRTA-Water.geojson' \
+	--named-layer='parcels:data/burke-parcels.geojson' \
+	--named-layer='roads:data/burke-roads.geojson' \
+	--named-layer='citynames:burke-city-names.json'
+
 # burke-river-trail (brt) map
 tilemaker data/north-carolina-latest.osm.pbf --output=data/brt_v2.pmtiles --config tilemaker-brt.json --process tilemaker-brt.lua
+tilemaker data/north-carolina-latest.osm.pbf --output=data/burke-2605a.pmtiles --config tilemaker-allpaths.json --process tilemaker-allpaths.lua
 tilemaker data/north-carolina-latest.osm.pbf --output=data/vlp.pmtiles --config tilemaker-vlp.json --process tilemaker-vlp.lua
 
-#pmtiles convert valdese.mbtiles valdese.pmtiles
-#pmtiles convert burke.mbtiles burke.pmtiles
+pmtiles convert data/globe.mbtiles data/globe.pmtiles
 
 ogrinfo -so data/parcels nc_burke_parcels_poly
 
@@ -60,11 +81,9 @@ ogr2ogr -f GeoJSON -sql "SELECT PIN,Shape FROM PROD_PARCEL_VIEW_FC" -t_srs EPSG:
 ogr2ogr -f GeoJSON -sql "SELECT ST_PointOnSurface(Shape), * FROM PROD_PARCEL_VIEW_FC" -dialect sqlite -t_srs EPSG:4326 data/parcelpts.geojson data/burke_20250624.gdb.zip
 ogr2ogr -f CSV  -lco GEOMETRY=AS_XY -sql "SELECT REID,PIN,PIN_EXT,ST_PointOnSurface(Shape) FROM PROD_PARCEL_VIEW_FC" -dialect sqlite -t_srs EPSG:4326 data/parcelpts.csv data/burke_20250624.gdb.zip
 #
-ogr2ogr -f GeoJSON -where "PIN LIKE '%'" -t_srs EPSG:4326 -select "REID,PIN,PIN_EXT,LOCATION_ADDR,PHYADDR_CITY,PHYADDR_ZIP" data/burke-parcels.geojson data/burke_20250624.gdb.zip PROD_PARCEL_VIEW_FC
 ogr2ogr -f GeoJSON -t_srs EPSG:4326 -select "SRNUM,CLASS,FULLNAME" data/burke-roads.geojson data/burke_20250624.gdb.zip RoadCenterlines
 ogr2ogr -f GeoJSON -t_srs EPSG:4326 data/burke-city-limits.geojson data/burke_20250624.gdb.zip city_limits
 
-php filter-duplicate-pins.php <  data/burke-parcels.geojson > data/burke-parcels2.geojson
 mv -f data/burke-parcels2.geojson data/burke-parcels.geojson
 rm data/burke-map.pmtiles
 tippecanoe -Z6 -z16 --coalesce-densest-as-needed --simplify-only-low-zooms -f -o data/burke-map.pmtiles \

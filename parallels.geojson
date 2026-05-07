@@ -1,0 +1,7 @@
+{"type":"FeatureCollection","features":[
+{"type":"Feature","properties": {"name":"Equator"},"geometry":{"type":"LineString","coordinates":[[-180, 0], [180, 0]]}},
+{"type":"Feature","properties": {"name":"45th Parallel North"},"geometry":{"type":"LineString","coordinates":[[-180, 45], [180, 45]]}},
+{"type":"Feature","properties": {"name":"45th Parallel South"},"geometry":{"type":"LineString","coordinates":[[-180, -45], [180, -45]]}},
+{"type":"Feature","properties": {"name":"85th Parallel North"},"geometry":{"type":"LineString","coordinates":[[-180, 85], [180, 85]]}},
+{"type":"Feature","properties": {"name":"85th Parallel South"},"geometry":{"type":"LineString","coordinates":[[-180, -85], [180, -85]]}}
+]}

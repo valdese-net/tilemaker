@@ -5,18 +5,18 @@ function Set(list)
 	return set
 end
 
-majorRoadValues = Set { "motorway", "trunk", "primary" }
-mainRoadValues  = Set { "secondary", "motorway_link", "trunk_link", "primary_link", "secondary_link" }
-midRoadValues   = Set { "tertiary", "tertiary_link" }
-minorRoadValues = Set { "unclassified", "residential", "road", "living_street" }
-roadsWithRef    = Set { "motorway", "primary" }
-trackValues     = Set { "track" }
-pathValues      = Set { "footway", "cycleway", "bridleway", "path", "steps", "pedestrian" }
-pavedValues     = Set { "paved", "asphalt", "cobblestone", "concrete", "concrete:lanes", "concrete:plates", "metal", "paving_stones", "sett", "unhewn_cobblestone", "wood" }
+MajorRoadValues = Set { "motorway", "trunk", "primary" }
+MainRoadValues  = Set { "secondary", "motorway_link", "trunk_link", "primary_link", "secondary_link" }
+MidRoadValues   = Set { "tertiary", "tertiary_link" }
+MinorRoadValues = Set { "unclassified", "residential", "road", "living_street" }
+RoadsWithRef    = Set { "motorway", "primary" }
+TrackValues     = Set { "track" }
+PathValues      = Set { "footway", "cycleway", "bridleway", "path", "steps", "pedestrian" }
+PavedValues     = Set { "paved", "asphalt", "cobblestone", "concrete", "concrete:lanes", "concrete:plates", "metal", "paving_stones", "sett", "unhewn_cobblestone", "wood" }
 
-showBuildings   = Set { "school", "public", "government", "fire_station", "industrial", "warehouse" }
+ShowBuildings   = Set { "school", "public", "government", "fire_station", "industrial", "warehouse" }
 
-showPlaceName   = Set { "town", "city", "municipality", "village", "hamlet" }
+ShowPlaceName   = Set { "town", "city", "municipality", "village", "hamlet" }
 brtMorphPlace = {["Longview"] = "Long View"}
 brtPlaces = Set {"Glen Alpine","Morganton","Drexel","Valdese","Rutherford College","Connelly Springs","Rhodhiss","Long View","Hildebran"}
 
@@ -34,11 +34,11 @@ node_keys = { "place","tourism","waterway" }
 -- Assign nodes to a layer, and set attributes, based on OSM tags
 function node_function(node)
 	local place  = Find("place")
-	local name = getAsciiName()
+	local name = GetAsciiName()
 
 	if brtMorphPlace[name] then name = brtMorphPlace[name] end
 
-	if name and place and showPlaceName[place] and brtPlaces[name] then
+	if name and place and ShowPlaceName[place] and brtPlaces[name] then
 		--print(place, name)
 		Layer("label", false)
 		Attribute("class", "place")
@@ -56,7 +56,7 @@ function way_function()
 	local addedLayer = false
 	local waterway = Find("waterway")
 	local highway  = Find("highway")
-	local name = getAsciiName()
+	local name = GetAsciiName()
 
 	if (Holds("name") or Holds("ref")) and Intersects("burke") then
 		if highway~="" then
@@ -64,14 +64,14 @@ function way_function()
 			if linked_path then
 				highway = linked_path
 			end
-			if pathValues[highway] then
+			if PathValues[highway] then
 				highway = "path"
 			end
 	
 			local objtype = "road"
 			local objclass = highway
 	
-			if majorRoadValues[highway] and not linked_path then
+			if MajorRoadValues[highway] and not linked_path then
 				addedLayer = true
 				Layer("road", false)
 				Attribute("class", highway)
@@ -100,7 +100,7 @@ function way_function()
 	end
 end
 
-function isAscii(s)
+function IsAscii(s)
 	local i,j = s:find("[^%p%s%w]")
 	return i == nil
 end
@@ -109,10 +109,10 @@ local replwords = {
 	['North']='',['South']='',['East']='',['West']='',['Northeast']='',['Northwest']='',['Southeast']='',['Southwest']='',
 	['Road']='Rd',['Avenue']='Ave',['Drive']='Dr',['Street']='St',['Boulevard']='Blvd',['Lane']='Ln',['Extension']='Ext'
 }
-function padStr(s) return (s:len() > 0) and ' '..s..' ' or ' ' end
-function trimSuffixes(s)
+function DoPadStr(s) return (s:len() > 0) and ' '..s..' ' or ' ' end
+function DoTrimRoadSuffixes(s)
 	local s2 = s
-	for k,v in pairs(replwords) do s2 = s2:gsub(' '..k..' ',padStr(v)) end
+	for k,v in pairs(replwords) do s2 = s2:gsub(' '..k..' ',DoPadStr(v)) end
 	for k,v in pairs(replwords) do s2 = s2:gsub(k..'$',v) end
 	s2 = s2:gsub("%s+$", "")
 	for k,v in pairs(replwords) do s2 = s2:gsub(k..'$',v) end
@@ -120,10 +120,10 @@ function trimSuffixes(s)
 	return s2
 end
 
-function getAsciiName()
+function GetAsciiName()
 	local name = Find("name")
-	if name~="" and isAscii(name) then
-		return trimSuffixes(name)
+	if name~="" and IsAscii(name) then
+		return DoTrimRoadSuffixes(name)
 	end
 
 	return nil
