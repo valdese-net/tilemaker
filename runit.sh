@@ -29,6 +29,9 @@ tilemaker data/vlp.osm.pbf --output=data/vlp.pmtiles --config tilemaker-allpaths
 # valdese-area generated via https://app.protomaps.com/
 tilemaker data/valdese-area.osm.pbf --output=data/valdese-area.pmtiles --config tilemaker-vlp.json --process tilemaker-vlp.lua
 
+# state provided parcel data
+ogrinfo -so /vsizip/.data/burke-parcels-04-20-2026.zip
+
 # burke nc parcel map
 ogrinfo -so data/burke_20250624.gdb.zip PROD_PARCEL_VIEW_FC
 ogr2ogr -f GeoJSON -where "PARCEL_PK > 0" -t_srs EPSG:4326 -select "PARCEL_PK,REID,PIN,PIN_EXT,LOCATION_ADDR,PHYADDR_CITY,PHYADDR_ZIP" data/burke-parcels.geojson data/burke_20250624.gdb.zip PROD_PARCEL_VIEW_FC
@@ -36,6 +39,11 @@ ogr2ogr -f GeoJSON -t_srs EPSG:4326 data/burke-parcels.geojson data/burke_202506
 php filter-burke-parcels.php <  data/burke-parcels.geojson > data/burke-parcels2.geojson
 tippecanoe -f -Z12 -z12 -y PARCEL_PK -o data/_burke-parcels.pmtiles --named-layer='parcels:data/burke-parcels.geojson'
 
+# show what is in the burke billing file
+zcat data/BurkeNC_2025_Billing.zip | head -100
+
+#fire districts
+ogrinfo -ro -so /vsizip/./data/ncfd.shape.zip NC_Fire_Districts
 
 # tilemaker data/globe.mbtiles --output=data/globe2burke.pmtiles --config tilemaker-globe.json --process tilemaker-globe.lua
 # sqlite3 maplibre.mbtiles "SELECT COUNT(*) FROM tiles WHERE tile_data IS NULL;"   

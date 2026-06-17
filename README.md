@@ -19,6 +19,8 @@ make prefix=~ MANPREFIX=~/share/man install
 
 - https://www.burkenc.org/2495/Data-Sets
 - https://www.nconemap.gov/#directdatadownloads
+	- [Fire Stations](https://www.nconemap.gov/datasets/6f4fe0c55b0d4cbb92877e461d698c29_0/explore)
+	- [Fire Districts](https://www.nconemap.gov/datasets/abc2d489a9484854b21ffb029eb45a98/explore)
 
 ## queries to find issues
 
