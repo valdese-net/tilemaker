@@ -91,7 +91,7 @@ with open("data/burkefd.tsv", "w") as out:
 		print(f"{fd_id}\t{firedistrict.name}",file=out)
 
 with open("data/parcel2fd.tsv", "w") as out:
-	print(f"NPARNO\tPARVAL\tFD\tX\tY",file=out)
+	print(f"NPARNO\tPARVAL\tFDID\tX\tY",file=out)
 	for parcel in parcels.values():
 		pt = ogr.CreateGeometryFromWkb(parcel.pt)
 		print(f"{parcel.id}\t{parcel.val}\t{parcel.fd}\t{pt.GetX():.6f}\t{pt.GetY():.6f}",file=out)

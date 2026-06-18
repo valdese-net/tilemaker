@@ -44,6 +44,7 @@ zcat data/BurkeNC_2025_Billing.zip | head -100
 
 #fire districts
 ogrinfo -ro -so /vsizip/./data/ncfd.shape.zip NC_Fire_Districts
+ogrinfo -ro -so /vsizip/./data/NC_Fire_Stations_7200722316549403871.zip Fire_Stations
 
 # tilemaker data/globe.mbtiles --output=data/globe2burke.pmtiles --config tilemaker-globe.json --process tilemaker-globe.lua
 # sqlite3 maplibre.mbtiles "SELECT COUNT(*) FROM tiles WHERE tile_data IS NULL;"   
